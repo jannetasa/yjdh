@@ -1,0 +1,18 @@
+name: Run yarn audit scheduled
+on:
+  schedule:
+    # Once a day at 7 o-clock
+    - cron: "0 5 * * *"
+  push:
+    branches: [ main, yarn-audit-scheduled ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Yarn Audit
+        uses: pragatheeswarans/yarn-audit-action@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          paths: |
+            frontend
