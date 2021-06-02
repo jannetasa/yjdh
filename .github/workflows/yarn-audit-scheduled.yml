@@ -5,14 +5,30 @@ on:
     - cron: "0 5 * * *"
   push:
     branches: [ main, yarn-audit-scheduled ]
+defaults:
+  run:
+    working-directory: ./frontend
 jobs:
-  build:
+  audit:
+    name: Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Yarn Audit
-        uses: pragatheeswarans/yarn-audit-action@v1.0.0
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          paths: |
-            frontend
+          node-version: '14'
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: yarn --prefer-offline --frozen-lockfile --check-files
+      - name: Run audit
+        run: yarn audit
