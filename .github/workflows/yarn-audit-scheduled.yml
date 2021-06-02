@@ -32,3 +32,13 @@ jobs:
         run: yarn --prefer-offline --frozen-lockfile --check-files
       - name: Run audit
         run: yarn audit
+      - name: Yarn audit scan failure slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: DeployManager
+          SLACK_ICON: https://a.slack-edge.com/80588/img/services/outgoing-webhook_48.png
+          SLACK_TITLE: Yarn audit has found some vulnerabilities!
+          SLACK_MESSAGE: Yarn audit has found some vulnerabilities!
+          SLACK_CHANNEL: yjdh
+        if: failure()

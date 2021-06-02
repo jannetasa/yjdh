@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 defaults:
   run:
-    working-directory: ./frontend/benefit
+    working-directory: ./frontend/
 jobs:
   test:
     name: Test
